@@ -1,0 +1,18 @@
+jobs:
+  - name: example_job
+    parser:
+      type: IPCommandParser
+      scope: global
+      command_timeout: 5
+      interface: eth0            # Replace with your network interface
+      fetch_ipv6: true
+      fetch_ipv4: false
+      ipv6_index: 0              # Use 0 for the first IPv6 address, or adjust as needed, None means all
+    updaters:
+      - type: StratoUpdater      # Replace with your updater type     
+        username: "your_username"
+        password: "your_password"
+        domain: "your.domain.com"
+    # - name: another_job
+    #   parser: ...
+    #   updaters: ...
