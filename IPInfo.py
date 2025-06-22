@@ -3,7 +3,7 @@ class IPInfo:
         self.address = address
         self.valid_lifetime = valid_lifetime
         
-    def __str__(self):
+    def __repr__(self):
         return f"IPInfo(address={self.address}, valid_lifetime={self.valid_lifetime})"
 
 class IPv4Info(IPInfo):

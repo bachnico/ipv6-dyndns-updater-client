@@ -20,8 +20,6 @@ class IPCommandParser:
         ]
         output = subprocess.check_output(cmd, timeout=self.timeout).decode()
         
-        print(output)
-
         # Multiline regex to match inet/inet6 and the following valid_lft
         pattern = re.compile(
             r'^\s+(?P<inet>inet6?) (?P<ip>[\da-fA-F\.:]+)/\d+.*\n\s+valid_lft (?P<lft>\w+)',
@@ -49,8 +47,6 @@ class IPCommandParser:
         ipv4s = [ip for ip in all_ips if isinstance(ip, IPv4Info)]
         ipv6s = [ip for ip in all_ips if isinstance(ip, IPv6Info)]
         
-        print(all_ips)
-
         ips = []
         if self.fetch_ipv4:
             if self.ipv4_index is not None:

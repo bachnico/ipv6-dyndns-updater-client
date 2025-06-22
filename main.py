@@ -25,11 +25,12 @@ def run_job(job_conf, daemon=True):
     updaters = []
     for updater_conf in job_conf["updaters"]:
         UpdaterClass = import_class(f"updaters.{updater_conf['type']}", updater_conf['type'])
-        updaters.append(UpdaterClass(updater_conf))
+        updaters.append(UpdaterClass(updater_conf, job_name=job_conf.get("name")))
 
     def do_update():
         try:
             ips, sleep_time = parser.get_ips()
+            logging.debug(f"[{job_conf['name']}] Parser successfully fetched IPs: {ips}")
         except Exception as e:
             logging.error(f"[{job_conf['name']}] Parser failed: {e}")
             raise e
@@ -37,9 +38,7 @@ def run_job(job_conf, daemon=True):
         for updater in updaters:
             try:
                 ips_changed = updater.update(ips)
-                if ips_changed:
-                    logging.info(f"[{job_conf['name']}] Updater {updater.__class__.__name__} updated successfully.")
-                else:
+                if not ips_changed:
                     logging.info(f"[{job_conf['name']}] Updater {updater.__class__.__name__} executed successfully, but did not change IPs.")
                 return sleep_time
                 
@@ -63,6 +62,10 @@ def main():
 
     config = load_config(args.config)
     jobs = config.get("jobs", [])
+    
+    # Set logging level
+    log_level = config.get("log_level", "INFO").upper()
+    logging.getLogger().setLevel(getattr(logging, log_level, logging.INFO))
 
     if len(jobs) == 0:
         logging.error("No jobs found in the configuration file.")
